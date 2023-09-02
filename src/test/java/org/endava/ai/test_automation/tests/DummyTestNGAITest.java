@@ -19,7 +19,13 @@ public class DummyTestNGAITest {
 
     @BeforeClass
     public void beforeClass() {
-        testResultHandler = new TestNGTestResultHandler();
+        testResultHandler = new TestNGTestResultHandler() {
+            @Override
+            public String logContent() {
+                //todo implement fetching the log file
+                return super.logContent();
+            }
+        };
     }
 
 

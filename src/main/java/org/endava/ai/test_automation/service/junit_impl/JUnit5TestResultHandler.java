@@ -34,4 +34,10 @@ public class JUnit5TestResultHandler extends TestResultHandlerImpl implements Af
         return null;
     }
 
+
+    @Override
+    public String logContent() {
+        return null;
+    }
+
 }

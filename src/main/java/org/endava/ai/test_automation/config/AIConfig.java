@@ -21,4 +21,5 @@ interface AIConfig extends Config {
     @Key("additional.request")
     String additionalRequest();
 
+
 }

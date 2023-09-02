@@ -4,4 +4,7 @@ public interface TestResultHandler {
 
     String handleTestResult(Object context);
 
+    String logContent();
+
+
 }

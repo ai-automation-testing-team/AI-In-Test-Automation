@@ -20,6 +20,15 @@ import java.util.Objects;
 
 public abstract class TestResultHandlerImpl implements TestResultHandler {
 
+    private static OpenAiService openAiServiceInstance;
+
+    private static OpenAiService getOpenAiServiceInstance() {
+        if (openAiServiceInstance == null) {
+            openAiServiceInstance = new OpenAiService(aiConfig.token());
+        }
+        return openAiServiceInstance;
+    }
+
     private final MessageTemplate messageTemplate;
     protected static final AIConfig aiConfig = ConfigCache.getOrCreate(AIConfig.class);
 
@@ -29,7 +38,8 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
             "Java, " + techUsed + ", " + aiConfig.techUsed(),
             aiConfig.responseLimit(),
             "Please try to do a good analysis and try to provide me some proposal solution for my problem.",
-            aiConfig.additionalRequest()
+            aiConfig.additionalRequest(),
+            logContent()
         );
     }
 
@@ -41,22 +51,20 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
             String stackTrace = getStackTrace(throwable);
             String message = messageTemplate.formatMessage(throwable.getMessage(), stackTrace, methodCodes);
 
-            //todo remove this
-            // System.out.println(message);
 
             final List<ChatMessage> messages = new ArrayList<>();
             final ChatMessage systemMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(),
                 message);
             messages.add(systemMessage);
 
-            OpenAiService service = new OpenAiService(aiConfig.token());
+            OpenAiService service = getOpenAiServiceInstance();
 
             ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest
                 .builder()
                 .model(aiConfig.model())
                 .messages(messages)
                 .n(1)
-                .maxTokens(350)
+                .maxTokens(Integer.valueOf(aiConfig.responseLimit()))
                 .logitBias(new HashMap<>())
                 .build();
 

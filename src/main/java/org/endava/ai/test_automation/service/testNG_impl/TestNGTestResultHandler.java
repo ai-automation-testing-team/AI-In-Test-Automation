@@ -3,7 +3,6 @@ package org.endava.ai.test_automation.service.testNG_impl;
 import org.endava.ai.test_automation.annotations.AnalysisAI;
 import org.endava.ai.test_automation.service.TestResultHandlerImpl;
 import org.testng.ITestResult;
-import org.testng.annotations.Test;
 
 public class TestNGTestResultHandler extends TestResultHandlerImpl {
 
@@ -26,6 +25,12 @@ public class TestNGTestResultHandler extends TestResultHandlerImpl {
             Throwable throwable = iTestResult.getThrowable();
             return handleTestFailure(analysisAI, throwable);
         }
+        return null;
+    }
+
+
+    @Override
+    public String logContent() {
         return null;
     }
 
