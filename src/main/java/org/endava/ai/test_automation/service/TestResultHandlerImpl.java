@@ -13,6 +13,7 @@ import org.endava.ai.test_automation.util.MethodCodeExtractor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,17 +21,19 @@ import java.util.Objects;
 
 public abstract class TestResultHandlerImpl implements TestResultHandler {
 
+    protected static final AIConfig aiConfig = ConfigCache.getOrCreate(AIConfig.class);
+
+
     private static OpenAiService openAiServiceInstance;
 
     private static OpenAiService getOpenAiServiceInstance() {
         if (openAiServiceInstance == null) {
-            openAiServiceInstance = new OpenAiService(aiConfig.token());
+            openAiServiceInstance = new OpenAiService(aiConfig.token(), Duration.ofSeconds(50L));
         }
         return openAiServiceInstance;
     }
 
     private final MessageTemplate messageTemplate;
-    protected static final AIConfig aiConfig = ConfigCache.getOrCreate(AIConfig.class);
 
 
     public TestResultHandlerImpl(String techUsed) {
@@ -64,7 +67,7 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
                 .model(aiConfig.model())
                 .messages(messages)
                 .n(1)
-                .maxTokens(Integer.valueOf(aiConfig.responseLimit()))
+                .maxTokens(350)
                 .logitBias(new HashMap<>())
                 .build();
 
