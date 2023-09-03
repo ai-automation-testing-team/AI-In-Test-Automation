@@ -50,7 +50,7 @@ public class JUnit5TestResultHandler extends TestResultHandlerImpl implements Af
         }
     }
 
-    private static File getSourceFileFromTestClass(Class<?> clazz, String baseDir) {
+    public static File getSourceFileFromTestClass(Class<?> clazz, String baseDir) {
         String relativePath = "/src/test/java/";
         String packagePath = clazz.getPackage().getName().replace('.', '/');
         String fileName = clazz.getSimpleName() + ".java";

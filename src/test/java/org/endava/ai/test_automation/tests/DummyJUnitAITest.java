@@ -1,6 +1,6 @@
 package org.endava.ai.test_automation.tests;
 
-import jdk.jfr.Description;
+import io.qameta.allure.Description;
 import org.endava.ai.test_automation.annotations.AnalysisAI;
 import org.endava.ai.test_automation.logic.ServiceExample;
 import org.endava.ai.test_automation.service.junit_impl.JUnit5TestResultHandler;

@@ -22,9 +22,9 @@ public class TestModifier {
 
             if (method != null) {
                 // Add or update the @Description annotation
-                AnnotationSource<?> descriptionAnnotation = method.getAnnotation("Description");
+                AnnotationSource<?> descriptionAnnotation = method.getAnnotation("io.qameta.allure.Description");
                 if (descriptionAnnotation == null) {
-                    descriptionAnnotation = method.addAnnotation("Description");
+                    descriptionAnnotation = method.addAnnotation("io.qameta.allure.Description");
                 }
                 descriptionAnnotation.setStringValue(descriptionValue);
 
