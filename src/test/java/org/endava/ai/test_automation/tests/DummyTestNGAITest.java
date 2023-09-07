@@ -80,7 +80,6 @@ public class DummyTestNGAITest {
 		String token = "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";
 		UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(token, "");
 		git.push().setCredentialsProvider(credentialsProvider).call();
-
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost("https://api.github.com/repos/sushelski/AI-In-Test-Automation/pulls");
 		httpPost.addHeader("Authorization", "token " + token);
