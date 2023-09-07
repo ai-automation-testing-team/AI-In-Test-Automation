@@ -77,7 +77,7 @@ public class DummyTestNGAITest {
 		git.add().addFilepattern(".").call();
 		git.commit().setMessage("AI suggested changes").call();
 
-		String token = "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";
+		String token = "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";
 		UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(token, "");
 		git.push().setCredentialsProvider(credentialsProvider).call();
 		CloseableHttpClient httpClient = HttpClients.createDefault();
