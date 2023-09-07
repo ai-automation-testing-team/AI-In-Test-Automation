@@ -12,7 +12,8 @@ public class MessageTemplate {
     private final String logContent;
 
 
-    public MessageTemplate(String techUsed, String responseLimit, String defaultRequirement, String customRequirement, String logContent) {
+    public MessageTemplate(String techUsed, String responseLimit, String defaultRequirement, String customRequirement,
+                           String logContent) {
         this.techUsed = techUsed;
         this.responseLimit = responseLimit;
         this.defaultRequirement = defaultRequirement;
@@ -27,6 +28,8 @@ public class MessageTemplate {
         stringBuilder
             .append(this.techUsed)
             .append("\n")
+            .append("Limit the response in: ").append(this.responseLimit).append(" words")
+            .append("\n")
             .append("I am running test and my test is failing and this is the reason: ")
             .append("\n")
             .append(errorMessage)
@@ -35,11 +38,11 @@ public class MessageTemplate {
             .append("\n")
             .append(stackTrace)
             .append("\n")
-            .append("Here are the methods code:");
+            .append("Here is the used code:");
 
         methodCodes.forEach(s -> stringBuilder.append("\n").append(s));
 
-        if(Objects.nonNull(logContent) && !logContent.isEmpty()) {
+        if (Objects.nonNull(logContent) && !logContent.isEmpty()) {
             stringBuilder
                 .append("\n")
                 .append("Here is the log from the execution:")
@@ -51,8 +54,11 @@ public class MessageTemplate {
             .append("\n")
             .append("\n")
             .append(this.defaultRequirement)
-            .append(this.customRequirement);
-
+            .append(this.customRequirement)
+            .append("\n")
+            .append("\n")
+            .append(
+                "In your response please start every code block that you write with word CodeStart and end it with a word CodeEnd");
         return stringBuilder.toString();
     }
 

@@ -21,5 +21,11 @@ interface AIConfig extends Config {
     @Key("additional.request")
     String additionalRequest();
 
+    @Key("forbidden.packages")
+    String forbiddenPackages();
+
+    @Key("send.context")
+    String sendContext();
+
 
 }
