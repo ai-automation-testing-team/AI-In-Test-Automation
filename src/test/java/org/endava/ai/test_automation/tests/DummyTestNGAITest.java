@@ -7,6 +7,7 @@ import io.qameta.allure.Description;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import org.aeonbits.owner.ConfigCache;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -16,10 +17,12 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.endava.ai.test_automation.annotations.AnalysisAI;
+import org.endava.ai.test_automation.config.AIConfig;
 import org.endava.ai.test_automation.logic.ServiceExample;
 import org.endava.ai.test_automation.service.TestModifier;
 import org.endava.ai.test_automation.service.TestResultHandler;
 import org.endava.ai.test_automation.service.testNG_impl.TestNGTestResultHandler;
+import org.endava.ai.test_automation.util.GitOperations;
 import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -30,6 +33,7 @@ import org.testng.annotations.Test;
 public class DummyTestNGAITest {
 
 	private TestResultHandler testResultHandler;
+	protected static final AIConfig aiConfig = ConfigCache.getOrCreate(AIConfig.class);
 
 	@BeforeClass
 	public void beforeClass() {
@@ -67,34 +71,27 @@ public class DummyTestNGAITest {
 	}
 
 	@AfterSuite(alwaysRun = true)
-	public void afterSuite() throws IOException, GitAPIException {
+	public void afterSuite() throws IOException {
 		Git git = Git.open(new File(""));
 		String currentBranch = git.getRepository().getFullBranch();
 		long l = System.currentTimeMillis();
-		String branchName = "ai-description-" + l;
-		git.branchCreate().setName(branchName).call();
-		git.checkout().setName(branchName).call();
-		git.add().addFilepattern(".").call();
-		git.commit().setMessage("AI suggested changes").call();
+		String newBranchName = "ai-description-" + l;
+		String repoPath = "";
+		String token = aiConfig.tokenFirstPart() + aiConfig.tokenSecondPart();
+		String repoOwner = "sushelski";
+		String repoName = "AI-In-Test-Automation";
+		String title = "Pull Request AI";
+		String description = "Pull Request Description AI";
 
-		String token = "ghp_wu08QCmDKrbPr7eN" + "WzCOAOVwp3ynKB2CEMxa";
-		UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(token, "");
-		git.push().setCredentialsProvider(credentialsProvider).call();
-		CloseableHttpClient httpClient = HttpClients.createDefault();
-		HttpPost httpPost = new HttpPost("https://api.github.com/repos/sushelski/AI-In-Test-Automation/pulls");
-		httpPost.addHeader("Authorization", "token " + token);
+		GitOperations gitOps = new GitOperations();
 
-		String json = "{\"title\": \"Pull Request Title\",\"body\": \"Pull Request Description\",\"head\": \""
-				+ branchName + "\",\"base\": \"" + currentBranch + "\"}";
-		StringEntity entity = new StringEntity(json);
-		httpPost.setEntity(entity);
-		httpPost.setHeader("Accept", "application/vnd.github.v3+json");
-		httpPost.setHeader("Content-type", "application/json");
-
-		CloseableHttpResponse response = httpClient.execute(httpPost);
-
-		System.out.println(response.getStatusLine());
-		httpClient.close();
+		try {
+			gitOps.createBranchAndCommit(repoPath, newBranchName);
+			gitOps.pushToRemote(repoPath, token);
+			gitOps.createPullRequest(repoOwner, repoName, title, description, newBranchName, currentBranch, token);
+		} catch (IOException | GitAPIException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

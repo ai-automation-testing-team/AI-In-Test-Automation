@@ -9,6 +9,12 @@ interface AIConfig extends Config {
     @Key("token")
     String token();
 
+    @Key("token.first.part")
+    String tokenFirstPart();
+
+    @Key("token.second.part")
+    String tokenSecondPart();
+
     @Key("model")
     String model();
 
