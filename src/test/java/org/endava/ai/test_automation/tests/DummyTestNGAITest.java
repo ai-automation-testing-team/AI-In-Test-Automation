@@ -1,31 +1,31 @@
 package org.endava.ai.test_automation.tests;
 
-import io.qameta.allure.Allure;
+import static org.endava.ai.test_automation.service.junit_impl.JUnit5TestResultHandler.getMavenBaseDirectory;
+import static org.endava.ai.test_automation.service.junit_impl.JUnit5TestResultHandler.getSourceFileFromTestClass;
+
+import io.qameta.allure.Description;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.endava.ai.test_automation.annotations.AnalysisAI;
 import org.endava.ai.test_automation.logic.ServiceExample;
 import org.endava.ai.test_automation.service.TestModifier;
 import org.endava.ai.test_automation.service.TestResultHandler;
 import org.endava.ai.test_automation.service.testNG_impl.TestNGTestResultHandler;
-import org.endava.ai.test_automation.ssh.SingletonSshSessionFactory;
 import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import static org.endava.ai.test_automation.service.junit_impl.JUnit5TestResultHandler.getMavenBaseDirectory;
-import static org.endava.ai.test_automation.service.junit_impl.JUnit5TestResultHandler.getSourceFileFromTestClass;
-import io.qameta.allure.Description;
 
 public class DummyTestNGAITest {
 
@@ -60,25 +60,42 @@ public class DummyTestNGAITest {
 		File file = getSourceFileFromTestClass(aClass, mavenBaseDirectory);
 		TestModifier.addDescriptionAnnotation(file, result.getMethod().getMethodName(), "Viksa");
 
-		// System.out.println("The AI suggestion for fixing the test is: \n" + aiResults);
+		// System.out.println("The AI suggestion for fixing the test is: \n" +
+		// aiResults);
 		// todo add ai results somewhere
 
 	}
 
 	@AfterSuite(alwaysRun = true)
 	public void afterSuite() throws IOException, GitAPIException {
-		Git git = Git.open(new File("C:\\Users\\vsushelski\\OneDrive - ENDAVA\\Documents\\Private\\Repositories\\AI-In-Test-Automation.git"));
+		Git git = Git.open(new File(""));
+		String currentBranch = git.getRepository().getFullBranch();
 		long l = System.currentTimeMillis();
 		String branchName = "ai-description-" + l;
 		git.branchCreate().setName(branchName).call();
 		git.checkout().setName(branchName).call();
 		git.add().addFilepattern(".").call();
 		git.commit().setMessage("AI suggested changes").call();
-		UsernamePasswordCredentialsProvider credentialsProvider = new
-		UsernamePasswordCredentialsProvider("vsushelski",
-		"Replace_me");
+
+		String token = "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";
+		UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(token, "");
 		git.push().setCredentialsProvider(credentialsProvider).call();
 
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		HttpPost httpPost = new HttpPost("https://api.github.com/repos/sushelski/AI-In-Test-Automation/pulls");
+		httpPost.addHeader("Authorization", "token " + token);
+
+		String json = "{\"title\": \"Pull Request Title\",\"body\": \"Pull Request Description\",\"head\": \""
+				+ branchName + "\",\"base\": \"" + currentBranch + "\"}";
+		StringEntity entity = new StringEntity(json);
+		httpPost.setEntity(entity);
+		httpPost.setHeader("Accept", "application/vnd.github.v3+json");
+		httpPost.setHeader("Content-type", "application/json");
+
+		CloseableHttpResponse response = httpClient.execute(httpPost);
+
+		System.out.println(response.getStatusLine());
+		httpClient.close();
 	}
 
 }
