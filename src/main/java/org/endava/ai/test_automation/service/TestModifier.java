@@ -15,7 +15,7 @@ import java.util.List;
 public class TestModifier {
 
 
-    public static void addDescriptionAnnotation(File sourceFile, String methodName, String descriptionValue) {
+    public static void addAnnotation(File sourceFile, String methodName, String descriptionValue, String annotationName) {
         try {
             JavaClassSource javaClass = Roaster.parse(JavaClassSource.class, sourceFile);
 
@@ -31,9 +31,9 @@ public class TestModifier {
                         .getStringValue());
 
                 if (enableDesc) {
-                    AnnotationSource<?> descriptionAnnotation = method.getAnnotation("io.qameta.allure.Description");
+                    AnnotationSource<?> descriptionAnnotation = method.getAnnotation(annotationName);
                     if (descriptionAnnotation == null) {
-                        descriptionAnnotation = method.addAnnotation("io.qameta.allure.Description");
+                        descriptionAnnotation = method.addAnnotation(annotationName);
                     }
                     descriptionAnnotation.setStringValue(descriptionValue);
 

@@ -31,10 +31,10 @@ public class JUnit5TestResultHandler extends TestResultHandlerImpl implements Af
 
         String analysis = handleTestResult(context);
         String description = handleDescription(context);
-        TestModifier.addDescriptionAnnotation(file, context.getTestMethod().get().getName(), description);
+        TestModifier.addAnnotation(file, context.getTestMethod().get().getName(), description);
 
         if (context.getExecutionException().isEmpty()) {
-            TestModifier.addDescriptionAnnotation(file, context.getTestMethod().get().getName(), "Viksa");
+            TestModifier.addAnnotation(file, context.getTestMethod().get().getName(), "Viksa");
         }
         //todo add ai results somewhere
     }
