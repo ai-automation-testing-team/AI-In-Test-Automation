@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix-inspired Code Block</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #000;
+            color: #6a8759; /* Matrix green */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto; /* Allow scrolling for overflow content */
+            height: 100vh;
+            margin: 0; /* Remove default body margin */
+            padding: 20px; /* Give some spacing on the sides for better look on small screens */
+        }
+
+        .matrix-rain {
+            position: fixed; /* Fixed will ensure it covers the full viewport */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .description, .code-block {
+            z-index: 2;
+            position: relative;
+            max-width: 80%; /* Control the width to not extend full screen on larger screens */
+            margin: 10px 0; /* Add some vertical spacing between elements */
+        }
+
+        .description {
+            border: 2px solid #6a8759;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .code-block {
+            border: 3px solid #6a8759;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding-bottom: 40px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .code-content {
+            color: #cc7832;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        By making these adjustments, each code block should expand its height based on the content inside it without an individual scroll. The overall page will be scrollable if the content exceeds the viewport height.
+
+
+
+
+
+
+    </style>
+    <script>
+      // Matrix rain code
+      window.onload = function () {
+        let c = document.querySelector('.matrix-rain');
+        let ctx = c.getContext("2d");
+        c.height = window.innerHeight;
+        c.width = window.innerWidth;
+        let matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        matrix = matrix.split("");
+        let font_size = 12;
+        let columns = c.width / font_size;
+        let drops = [];
+        for (let x = 0; x < columns; x++)
+          drops[x] = 1;
+
+        function draw() {
+          ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
+          ctx.fillRect(0, 0, c.width, c.height);
+          ctx.font = font_size + "px Courier New";
+
+          for (let i = 0; i < drops.length; i++) {
+            let randomChance = Math.random();
+
+            if (randomChance > 0.995) { // Small chance to draw 'Endava' vertically
+              for (let j = 0; j < "Endava".length; j++) {
+                ctx.fillStyle = "#cc7832"; // Orange color
+                ctx.fillText("Endava"[j], i * font_size, (drops[i] + j) * font_size);
+              }
+              drops[i] += "Endava".length;
+            } else {
+              ctx.fillStyle = "#6a8759"; // Matrix green
+              let text = matrix[Math.floor(Math.random() * matrix.length)];
+              ctx.fillText(text, i * font_size, drops[i] * font_size);
+            }
+
+            // Resetting the drop if it goes beyond the canvas height
+            if (drops[i] * font_size > c.height && Math.random() > 0.975)
+              drops[i] = 0;
+            drops[i]++;
+          }
+        }
+
+        setInterval(draw, 50);
+      };
+    </script>
+</head>
+<body>
+<canvas class="matrix-rain"></canvas>
+${CONTENT}
+</body>
+</html>

@@ -27,5 +27,9 @@ interface AIConfig extends Config {
     @Key("send.context")
     String sendContext();
 
+    @Key("description.role")
+    String descriptionRole();
+
+
 
 }

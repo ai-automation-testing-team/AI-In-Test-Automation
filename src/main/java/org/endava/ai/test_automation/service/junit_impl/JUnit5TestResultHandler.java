@@ -1,6 +1,8 @@
 package org.endava.ai.test_automation.service.junit_impl;
 
 import org.endava.ai.test_automation.annotations.AnalysisAI;
+import org.endava.ai.test_automation.annotations.DescAI;
+import org.endava.ai.test_automation.annotations.FixAI;
 import org.endava.ai.test_automation.service.TestModifier;
 import org.endava.ai.test_automation.service.TestResultHandlerImpl;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -8,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public class JUnit5TestResultHandler extends TestResultHandlerImpl implements AfterEachCallback {
 
@@ -26,29 +29,30 @@ public class JUnit5TestResultHandler extends TestResultHandlerImpl implements Af
         String mavenBaseDirectory = getMavenBaseDirectory();
         File file = getSourceFileFromTestClass(aClass, mavenBaseDirectory);
 
-        TestModifier.addDescriptionAnnotation(file, context.getTestMethod().get().getName(), "Viksa");
+        String analysis = handleTestResult(context);
+        String description = handleDescription(context);
+        TestModifier.addDescriptionAnnotation(file, context.getTestMethod().get().getName(), description);
 
-        // String results = handleTestResult(context);
-
+        if (context.getExecutionException().isEmpty()) {
+            TestModifier.addDescriptionAnnotation(file, context.getTestMethod().get().getName(), "Viksa");
+        }
         //todo add ai results somewhere
     }
 
+
     public static String getMavenBaseDirectory() {
         try {
-            // Path to current working directory
             String currentDir = new File(".").getCanonicalPath();
-
-            // Check if pom.xml exists in the current directory
             if (new File(currentDir + "/pom.xml").exists()) {
                 return currentDir;
             } else {
-                // You can search parent directories or other locations here if needed
                 throw new RuntimeException("Unable to determine Maven base directory");
             }
         } catch (IOException e) {
             throw new RuntimeException("Error determining Maven base directory", e);
         }
     }
+
 
     public static File getSourceFileFromTestClass(Class<?> clazz, String baseDir) {
         String relativePath = "/src/test/java/";
@@ -57,14 +61,46 @@ public class JUnit5TestResultHandler extends TestResultHandlerImpl implements Af
         return new File(baseDir + relativePath + packagePath + "/" + fileName);
     }
 
+
     @Override
     public String handleTestResult(Object context) {
         ExtensionContext extensionContext = (ExtensionContext) context;
         AnalysisAI analysisAI = extensionContext.getTestMethod().get().getAnnotation(AnalysisAI.class);
         if (!extensionContext.getExecutionException().isEmpty()) {
             Throwable throwable = extensionContext.getExecutionException().get();
-            String s = handleTestFailure(analysisAI, throwable);
+            String s = handleTestAnalysis(analysisAI, throwable);
             return s;
+        }
+        return null;
+    }
+
+
+    @Override
+    public String handleDescription(final Object context) {
+        ExtensionContext extensionContext = (ExtensionContext) context;
+        DescAI descAI = extensionContext.getTestMethod().get().getAnnotation(DescAI.class);
+        if (Objects.nonNull(descAI) && descAI.value()) {
+            if (extensionContext.getExecutionException().isEmpty()) {
+                String s = handleTestDescription(descAI,
+                    ((ExtensionContext) context).getTestClass().get().getSimpleName(),
+                    ((ExtensionContext) context).getTestMethod().get().getName());
+                return s;
+            }
+        }
+        return null;
+    }
+
+
+    @Override
+    public String handleFixTest(final Object context) {
+        ExtensionContext extensionContext = (ExtensionContext) context;
+        FixAI fixAI = extensionContext.getTestMethod().get().getAnnotation(FixAI.class);
+        if (Objects.nonNull(fixAI)) {
+            if (!extensionContext.getExecutionException().isEmpty()) {
+                Throwable throwable = extensionContext.getExecutionException().get();
+                String s = handleTestFix(fixAI, throwable);
+                return s;
+            }
         }
         return null;
     }

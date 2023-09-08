@@ -1,8 +1,12 @@
 package org.endava.ai.test_automation.service.testNG_impl;
 
 import org.endava.ai.test_automation.annotations.AnalysisAI;
+import org.endava.ai.test_automation.annotations.DescAI;
+import org.endava.ai.test_automation.annotations.FixAI;
 import org.endava.ai.test_automation.service.TestResultHandlerImpl;
 import org.testng.ITestResult;
+
+import java.util.Objects;
 
 public class TestNGTestResultHandler extends TestResultHandlerImpl {
 
@@ -23,7 +27,38 @@ public class TestNGTestResultHandler extends TestResultHandlerImpl {
         boolean passed = iTestResult.getStatus() == ITestResult.SUCCESS;
         if (!passed) {
             Throwable throwable = iTestResult.getThrowable();
-            return handleTestFailure(analysisAI, throwable);
+            return handleTestAnalysis(analysisAI, throwable);
+        }
+        return null;
+    }
+
+
+    @Override
+    public String handleDescription(final Object context) {
+        ITestResult iTestResult = (ITestResult) context;
+        DescAI descAI = iTestResult.getMethod().getConstructorOrMethod().getMethod().getAnnotation(DescAI.class);
+        if (Objects.nonNull(descAI) && descAI.value()) {
+            if (iTestResult.getStatus() == ITestResult.SUCCESS) {
+                String s = handleTestDescription(descAI, iTestResult.getTestClass().getName(),
+                    iTestResult.getMethod().getMethodName());
+                return s;
+            }
+        }
+        return null;
+    }
+
+
+    @Override
+    public String handleFixTest(final Object context) {
+        ITestResult iTestResult = (ITestResult) context;
+        FixAI fixAI = iTestResult.getMethod().getConstructorOrMethod().getMethod()
+            .getAnnotation(FixAI.class);
+        if (Objects.nonNull(fixAI)) {
+            boolean passed = iTestResult.getStatus() == ITestResult.SUCCESS;
+            if (!passed) {
+                Throwable throwable = iTestResult.getThrowable();
+                return handleTestFix(fixAI, throwable);
+            }
         }
         return null;
     }

@@ -93,7 +93,7 @@ public class MethodCodeExtractor {
     }
 
 
-    private static String getFullMethodCode(String className, String methodName) throws IOException {
+    public static String getFullMethodCode(String className, String methodName) throws IOException {
         Path rootPath = Paths.get(ROOT_DIRECTORY);
         Path file = findFile(className, rootPath);
 
