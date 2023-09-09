@@ -1,4 +1,4 @@
-package org.endava.ai.test_automation.service;
+package org.ai.automation.test_automation.service;
 
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Method;

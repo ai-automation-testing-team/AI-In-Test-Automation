@@ -1,4 +1,4 @@
-package org.endava.ai.test_automation.annotations;
+package org.ai.automation.test_automation.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

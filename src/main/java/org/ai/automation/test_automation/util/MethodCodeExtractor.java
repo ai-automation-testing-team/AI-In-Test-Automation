@@ -1,4 +1,4 @@
-package org.endava.ai.test_automation.util;
+package org.ai.automation.test_automation.util;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
@@ -6,9 +6,9 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import org.aeonbits.owner.ConfigCache;
-import org.endava.ai.test_automation.annotations.AnalysisAI;
-import org.endava.ai.test_automation.config.AIConfig;
-import org.endava.ai.test_automation.model.SendContext;
+import org.ai.automation.test_automation.annotations.AnalysisAI;
+import org.ai.automation.test_automation.config.AIConfig;
+import org.ai.automation.test_automation.model.SendContext;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

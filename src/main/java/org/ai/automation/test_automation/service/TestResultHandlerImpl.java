@@ -1,4 +1,4 @@
-package org.endava.ai.test_automation.service;
+package org.ai.automation.test_automation.service;
 
 import com.theokanning.openai.completion.chat.ChatCompletionChoice;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
@@ -6,13 +6,13 @@ import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
 import org.aeonbits.owner.ConfigCache;
-import org.endava.ai.test_automation.annotations.AnalysisAI;
-import org.endava.ai.test_automation.annotations.DescAI;
-import org.endava.ai.test_automation.annotations.FixAI;
-import org.endava.ai.test_automation.config.AIConfig;
-import org.endava.ai.test_automation.model.DescUser;
-import org.endava.ai.test_automation.model.MessageTemplate;
-import org.endava.ai.test_automation.util.MethodCodeExtractor;
+import org.ai.automation.test_automation.annotations.AnalysisAI;
+import org.ai.automation.test_automation.annotations.DescAI;
+import org.ai.automation.test_automation.annotations.FixAI;
+import org.ai.automation.test_automation.config.AIConfig;
+import org.ai.automation.test_automation.model.DescUser;
+import org.ai.automation.test_automation.model.MessageTemplate;
+import org.ai.automation.test_automation.util.MethodCodeExtractor;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-import static org.endava.ai.test_automation.util.MethodCodeExtractor.getFullMethodCode;
+import static org.ai.automation.test_automation.util.MethodCodeExtractor.getFullMethodCode;
 
 public abstract class TestResultHandlerImpl implements TestResultHandler {
 

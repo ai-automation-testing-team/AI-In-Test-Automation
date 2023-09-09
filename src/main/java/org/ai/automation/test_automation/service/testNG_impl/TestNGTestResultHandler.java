@@ -1,9 +1,9 @@
-package org.endava.ai.test_automation.service.testNG_impl;
+package org.ai.automation.test_automation.service.testNG_impl;
 
-import org.endava.ai.test_automation.annotations.AnalysisAI;
-import org.endava.ai.test_automation.annotations.DescAI;
-import org.endava.ai.test_automation.annotations.FixAI;
-import org.endava.ai.test_automation.service.TestResultHandlerImpl;
+import org.ai.automation.test_automation.annotations.AnalysisAI;
+import org.ai.automation.test_automation.annotations.DescAI;
+import org.ai.automation.test_automation.annotations.FixAI;
+import org.ai.automation.test_automation.service.TestResultHandlerImpl;
 import org.testng.ITestResult;
 
 import java.util.Objects;

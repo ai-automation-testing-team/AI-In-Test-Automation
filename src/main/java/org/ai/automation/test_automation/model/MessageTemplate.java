@@ -1,4 +1,4 @@
-package org.endava.ai.test_automation.model;
+package org.ai.automation.test_automation.model;
 
 import java.util.List;
 import java.util.Objects;

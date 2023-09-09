@@ -1,4 +1,4 @@
-package org.endava.ai.test_automation.config;
+package org.ai.automation.test_automation.config;
 
 import org.aeonbits.owner.Config;
 
