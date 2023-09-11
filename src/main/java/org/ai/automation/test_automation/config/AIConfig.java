@@ -6,6 +6,7 @@ import org.aeonbits.owner.Config;
 public
 interface AIConfig extends Config {
 
+    @ConverterClass(AITokenConverter.class)
     @Key("token")
     String token();
 
