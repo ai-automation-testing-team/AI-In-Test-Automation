@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 public @interface DescAI {
 
     boolean value() default true;
+    String content() default "";
 
 
 }

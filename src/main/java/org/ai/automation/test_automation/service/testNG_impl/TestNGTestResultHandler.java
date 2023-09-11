@@ -20,27 +20,27 @@ public class TestNGTestResultHandler extends TestResultHandlerImpl {
 
 
     @Override
-    public String handleTestResult(Object context) {
+    public String handleTestResult(Object context, String logContent) {
         ITestResult iTestResult = (ITestResult) context;
         AnalysisAI analysisAI = iTestResult.getMethod().getConstructorOrMethod().getMethod()
             .getAnnotation(AnalysisAI.class);
         boolean passed = iTestResult.getStatus() == ITestResult.SUCCESS;
         if (!passed) {
             Throwable throwable = iTestResult.getThrowable();
-            return handleTestAnalysis(analysisAI, throwable);
+            return handleTestAnalysis(analysisAI, throwable, logContent);
         }
         return null;
     }
 
 
     @Override
-    public String handleDescription(final Object context) {
+    public String handleDescription(final Object context, String logContent) {
         ITestResult iTestResult = (ITestResult) context;
         DescAI descAI = iTestResult.getMethod().getConstructorOrMethod().getMethod().getAnnotation(DescAI.class);
         if (Objects.nonNull(descAI) && descAI.value()) {
             if (iTestResult.getStatus() == ITestResult.SUCCESS) {
                 String s = handleTestDescription(descAI, iTestResult.getTestClass().getName(),
-                    iTestResult.getMethod().getMethodName());
+                    iTestResult.getMethod().getMethodName(), logContent);
                 return s;
             }
         }
@@ -49,7 +49,7 @@ public class TestNGTestResultHandler extends TestResultHandlerImpl {
 
 
     @Override
-    public String handleFixTest(final Object context) {
+    public String handleFixTest(final Object context, String logContent) {
         ITestResult iTestResult = (ITestResult) context;
         FixAI fixAI = iTestResult.getMethod().getConstructorOrMethod().getMethod()
             .getAnnotation(FixAI.class);
@@ -57,16 +57,11 @@ public class TestNGTestResultHandler extends TestResultHandlerImpl {
             boolean passed = iTestResult.getStatus() == ITestResult.SUCCESS;
             if (!passed) {
                 Throwable throwable = iTestResult.getThrowable();
-                return handleTestFix(fixAI, throwable);
+                return handleTestFix(fixAI, throwable, logContent);
             }
         }
         return null;
     }
 
-
-    @Override
-    public String logContent() {
-        return null;
-    }
 
 }

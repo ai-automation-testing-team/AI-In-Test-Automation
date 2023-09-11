@@ -8,14 +8,17 @@ public class MessageTemplate {
     private final String techUsed;
     private final String responseLimit;
     private final String customRequirement;
-    private final String logContent;
+    private String logContent;
 
 
-    public MessageTemplate(String techUsed, String responseLimit, String customRequirement,
-                           String logContent) {
+    public MessageTemplate(String techUsed, String responseLimit, String customRequirement) {
         this.techUsed = techUsed;
         this.responseLimit = responseLimit;
         this.customRequirement = customRequirement;
+    }
+
+
+    public void setLogContent(final String logContent) {
         this.logContent = logContent;
     }
 
@@ -112,8 +115,11 @@ public class MessageTemplate {
             .append("Limit the response in: ").append(this.responseLimit).append(" words")
             .append("\n")
             .append(
-                "I want you to create me a description for my automation test similar with Zephyr syntax by using this test case template")
+                "I want you to create me a description for my automation test similar with Zephyr syntax by using this test case template.  " +
+                    "Please keep the exact same format including these  \"[]\" brackets, so just replace the \"{...}\" with your content and don't send additional text beside the template populated")
             .append("\n")
+            .append("\n")
+            .append("Test Case Template:")
             .append("\n")
             .append("[Test Name] - {write test name here}")
             .append("\n")
@@ -163,5 +169,6 @@ public class MessageTemplate {
 
         return stringBuilder.toString();
     }
+
 
 }

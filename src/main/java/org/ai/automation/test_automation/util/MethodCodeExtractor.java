@@ -45,6 +45,10 @@ public class MethodCodeExtractor {
             if (found) {
                 break;
             }
+            if(!element.getClassName().contains(aiConfig.projectPackage())) {
+                continue;
+            }
+
             try {
                 Class<?> clazz = Class.forName(element.getClassName());
 

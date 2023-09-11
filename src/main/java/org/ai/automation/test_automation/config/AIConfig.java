@@ -24,6 +24,9 @@ interface AIConfig extends Config {
     @Key("forbidden.packages")
     String forbiddenPackages();
 
+    @Key("project.package")
+    String projectPackage();
+
     @Key("send.context")
     String sendContext();
 

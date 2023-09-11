@@ -15,7 +15,7 @@ import java.util.List;
 public class TestModifier {
 
 
-    public static void addAnnotation(File sourceFile, String methodName, String descriptionValue, String annotationName) {
+    public static void addAnnotation(File sourceFile, String methodName, String descriptionValue) {
         try {
             JavaClassSource javaClass = Roaster.parse(JavaClassSource.class, sourceFile);
 
@@ -23,7 +23,7 @@ public class TestModifier {
 
 
             if (method != null) {
-                List<ValuePair> values = method.getAnnotation("org.endava.ai.test_automation.annotations.DescAI")
+                List<ValuePair> values = method.getAnnotation("org.ai.automation.test_automation.annotations.DescAI")
                     .getValues();
 
                 boolean enableDesc = values.isEmpty() || Boolean.parseBoolean(
@@ -31,18 +31,13 @@ public class TestModifier {
                         .getStringValue());
 
                 if (enableDesc) {
-                    AnnotationSource<?> descriptionAnnotation = method.getAnnotation(annotationName);
-                    if (descriptionAnnotation == null) {
-                        descriptionAnnotation = method.addAnnotation(annotationName);
-                    }
-                    descriptionAnnotation.setStringValue(descriptionValue);
-
                     AnnotationSource<?> descAI = method.getAnnotation(
-                        "org.endava.ai.test_automation.annotations.DescAI");
+                        "org.ai.automation.test_automation.annotations.DescAI");
                     if (descAI == null) {
-                        descAI = method.addAnnotation("org.endava.ai.test_automation.annotations.DescAI");
+                        descAI = method.addAnnotation("org.ai.automation.test_automation.annotations.DescAI");
                     }
-                    descAI.setLiteralValue("value","false");
+                    descAI.setLiteralValue("value", "false");
+                    descAI.setStringValue("content", descriptionValue);
 
                     // Write the modified source back to the file
                     try (FileWriter writer = new FileWriter(sourceFile)) {
@@ -57,12 +52,13 @@ public class TestModifier {
         }
     }
 
+
     public static void replaceMethod(File sourceFile, String fullClassName, String methodName, String newMethodBody) {
         try {
             JavaClassSource javaClass = Roaster.parse(JavaClassSource.class, sourceFile);
 
             // Check if the current class is the target class
-            if(javaClass.getQualifiedName().equals(fullClassName)) {
+            if (javaClass.getQualifiedName().equals(fullClassName)) {
                 // Find the method we want to replace
                 MethodSource<?> method = javaClass.getMethod(methodName, String.class);
 
@@ -86,4 +82,5 @@ public class TestModifier {
             e.printStackTrace();
         }
     }
+
 }

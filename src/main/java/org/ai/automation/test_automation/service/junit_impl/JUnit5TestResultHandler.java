@@ -20,12 +20,12 @@ public class JUnit5TestResultHandler extends TestResultHandlerImpl {
 
 
     @Override
-    public String handleTestResult(Object context) {
+    public String handleTestResult(Object context, String logContent) {
         ExtensionContext extensionContext = (ExtensionContext) context;
         AnalysisAI analysisAI = extensionContext.getTestMethod().get().getAnnotation(AnalysisAI.class);
         if (!extensionContext.getExecutionException().isEmpty()) {
             Throwable throwable = extensionContext.getExecutionException().get();
-            String s = handleTestAnalysis(analysisAI, throwable);
+            String s = handleTestAnalysis(analysisAI, throwable, logContent);
             return s;
         }
         return null;
@@ -33,14 +33,14 @@ public class JUnit5TestResultHandler extends TestResultHandlerImpl {
 
 
     @Override
-    public String handleDescription(final Object context) {
+    public String handleDescription(final Object context, String logContent) {
         ExtensionContext extensionContext = (ExtensionContext) context;
         DescAI descAI = extensionContext.getTestMethod().get().getAnnotation(DescAI.class);
         if (Objects.nonNull(descAI) && descAI.value()) {
             if (extensionContext.getExecutionException().isEmpty()) {
                 String s = handleTestDescription(descAI,
                     ((ExtensionContext) context).getTestClass().get().getSimpleName(),
-                    ((ExtensionContext) context).getTestMethod().get().getName());
+                    ((ExtensionContext) context).getTestMethod().get().getName(), logContent);
                 return s;
             }
         }
@@ -49,13 +49,13 @@ public class JUnit5TestResultHandler extends TestResultHandlerImpl {
 
 
     @Override
-    public String handleFixTest(final Object context) {
+    public String handleFixTest(final Object context, String logContent) {
         ExtensionContext extensionContext = (ExtensionContext) context;
         FixAI fixAI = extensionContext.getTestMethod().get().getAnnotation(FixAI.class);
         if (Objects.nonNull(fixAI)) {
             if (!extensionContext.getExecutionException().isEmpty()) {
                 Throwable throwable = extensionContext.getExecutionException().get();
-                String s = handleTestFix(fixAI, throwable);
+                String s = handleTestFix(fixAI, throwable, logContent);
                 return s;
             }
         }
@@ -63,9 +63,5 @@ public class JUnit5TestResultHandler extends TestResultHandlerImpl {
     }
 
 
-    @Override
-    public String logContent() {
-        return null;
-    }
 
 }

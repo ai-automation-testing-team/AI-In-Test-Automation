@@ -30,6 +30,8 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
     protected static final AIConfig aiConfig = ConfigCache.getOrCreate(AIConfig.class);
 
 
+
+
     private static OpenAiService openAiServiceInstance;
 
 
@@ -48,17 +50,17 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
         this.messageTemplate = new MessageTemplate(
             "Java, " + techUsed + ", " + aiConfig.techUsed(),
             aiConfig.responseLimit(),
-            aiConfig.additionalRequest(),
-            logContent()
+            aiConfig.additionalRequest()
         );
     }
 
 
-    protected String handleTestAnalysis(AnalysisAI analysisAI, Throwable throwable) {
+    protected String handleTestAnalysis(AnalysisAI analysisAI, Throwable throwable, String logContent) {
         StringBuilder aiResponse = new StringBuilder();
         if (Objects.nonNull(analysisAI)) {
             List<String> methodCodes = MethodCodeExtractor.extractMethodCodes((Exception) throwable);
             String stackTrace = getStackTrace(throwable);
+            messageTemplate.setLogContent(logContent);
             String message = messageTemplate.formatMessageAnalysis(throwable.getMessage(), stackTrace, methodCodes);
 
 
@@ -86,11 +88,12 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
     }
 
 
-    protected String handleTestFix(FixAI fixAI, Throwable throwable) {
+    protected String handleTestFix(FixAI fixAI, Throwable throwable, String logContent) {
         StringBuilder aiResponse = new StringBuilder();
         if (Objects.nonNull(fixAI)) {
             List<String> methodCodes = MethodCodeExtractor.extractMethodCodes((Exception) throwable);
             String stackTrace = getStackTrace(throwable);
+            messageTemplate.setLogContent(logContent);
             String message = messageTemplate.formatMessageFixTest(throwable.getMessage(), stackTrace, methodCodes);
 
 
@@ -118,7 +121,7 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
     }
 
 
-    protected String handleTestDescription(DescAI descAI, String className, String testMethodName) {
+    protected String handleTestDescription(DescAI descAI, String className, String testMethodName, String logContent) {
         StringBuilder aiResponse = new StringBuilder();
         Class<?> clazz;
         String code;
@@ -131,7 +134,7 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
                 throw new RuntimeException(e);
             }
 
-
+            messageTemplate.setLogContent(logContent);
             String message = messageTemplate.formatMessageDescription(code,
                 DescUser.valueOf(aiConfig.descriptionRole()));
 
