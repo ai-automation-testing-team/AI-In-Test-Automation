@@ -55,11 +55,7 @@ public class MessageTemplate {
             .append("\n")
             .append("\n")
             .append("Please try to do a good analysis and try to provide me some proposal solution for my problem.I would prefer code fixes")
-            .append(this.customRequirement)
-            .append("\n")
-            .append("\n")
-            .append(
-                "In your response please start every code block that you write with word CodeStart and end it with a word CodeEnd");
+            .append(this.customRequirement);
         return stringBuilder.toString();
     }
 
