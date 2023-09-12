@@ -34,6 +34,12 @@ interface AIConfig extends Config {
     @Key("description.role")
     String descriptionRole();
 
+    @Key("temperature")
+    Double temperature();
+
+    @Key("top.p")
+    Double topP();
+
 
 
 }

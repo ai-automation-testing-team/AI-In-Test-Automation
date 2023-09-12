@@ -16,8 +16,6 @@ import org.ai.automation.test_automation.model.MessageTemplate;
 import org.ai.automation.test_automation.util.MethodCodeExtractor;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,8 +27,6 @@ import static org.ai.automation.test_automation.util.MethodCodeExtractor.getFull
 public abstract class TestResultHandlerImpl implements TestResultHandler {
 
     protected static final AIConfig aiConfig = ConfigCache.getOrCreate(AIConfig.class);
-
-
 
 
     private static OpenAiService openAiServiceInstance;
@@ -59,10 +55,12 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
     protected String handleTestAnalysis(AnalysisAI analysisAI, Throwable throwable, String logContent) {
         StringBuilder aiResponse = new StringBuilder();
         if (Objects.nonNull(analysisAI)) {
-            Pair<String, List<String>> classNameMethodCodes = MethodCodeExtractor.extractMethodCodes((Exception) throwable);
+            Pair<String, List<String>> classNameMethodCodes = MethodCodeExtractor.extractMethodCodes(
+                (Exception) throwable);
             String stackTrace = getStackTrace(throwable, classNameMethodCodes.a);
             messageTemplate.setLogContent(logContent);
-            String message = messageTemplate.formatMessageAnalysis(throwable.getMessage(), stackTrace, classNameMethodCodes.b);
+            String message = messageTemplate.formatMessageAnalysis(throwable.getMessage(), stackTrace,
+                classNameMethodCodes.b);
             System.out.println("Input message: " + message);
 
             final List<ChatMessage> messages = new ArrayList<>();
@@ -77,6 +75,8 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
                 .model(aiConfig.model())
                 .messages(messages)
                 .n(1)
+                .temperature(aiConfig.temperature())
+                .topP(aiConfig.topP())
                 .maxTokens(600)
                 .logitBias(new HashMap<>())
                 .build();
@@ -85,7 +85,6 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
             List<ChatCompletionChoice> choices = service.createChatCompletion(chatCompletionRequest).getChoices();
             choices.forEach(choice -> aiResponse.append(choice.getMessage().getContent()));
         }
-        System.out.println("Output message: " + aiResponse.toString());
         return aiResponse.toString();
     }
 
@@ -96,7 +95,8 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
             Pair<String, List<String>> classNameMethods = MethodCodeExtractor.extractMethodCodes((Exception) throwable);
             String stackTrace = getStackTrace(throwable, classNameMethods.a);
             messageTemplate.setLogContent(logContent);
-            String message = messageTemplate.formatMessageFixTest(throwable.getMessage(), stackTrace, classNameMethods.b);
+            String message = messageTemplate.formatMessageFixTest(throwable.getMessage(), stackTrace,
+                classNameMethods.b);
 
 
             final List<ChatMessage> messages = new ArrayList<>();

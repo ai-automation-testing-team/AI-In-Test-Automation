@@ -12,7 +12,6 @@ public class AITokenConverter implements Converter<String> {
     public String convert(final Method method, final String s) {
         if (s == null || s.isEmpty()) {
             String property = System.getProperty("ai.token");
-            System.out.printf("Tokennn: " + property);
             return property;
         }
         return s;
