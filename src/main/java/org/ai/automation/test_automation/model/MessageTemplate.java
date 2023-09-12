@@ -27,7 +27,7 @@ public class MessageTemplate {
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder
-            .append(this.techUsed)
+            .append("Tech used:" + this.techUsed)
             .append("\n")
             .append("Limit the response in: ").append(this.responseLimit).append(" words")
             .append("\n")
@@ -46,7 +46,7 @@ public class MessageTemplate {
         if (Objects.nonNull(logContent) && !logContent.isEmpty()) {
             stringBuilder
                 .append("\n")
-                .append("Here is the log from the execution:")
+                .append("Here is the log from the execution. The error lines from the log are crucial for creating a fix")
                 .append("\n")
                 .append(logContent);
         }
@@ -54,7 +54,7 @@ public class MessageTemplate {
         stringBuilder
             .append("\n")
             .append("\n")
-            .append("Please try to do a good analysis and try to provide me some proposal solution for my problem.")
+            .append("Please try to do a good analysis and try to provide me some proposal solution for my problem.I would prefer code fixes")
             .append(this.customRequirement)
             .append("\n")
             .append("\n")

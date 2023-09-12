@@ -5,6 +5,7 @@ import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.utils.Pair;
 import org.aeonbits.owner.ConfigCache;
 import org.ai.automation.test_automation.annotations.AnalysisAI;
 import org.ai.automation.test_automation.config.AIConfig;
@@ -35,10 +36,11 @@ public class MethodCodeExtractor {
     protected static final AIConfig aiConfig = ConfigCache.getOrCreate(AIConfig.class);
 
 
-    public static List<String> extractMethodCodes(Exception exception) {
+    public static Pair<String,List<String>> extractMethodCodes(Exception exception) {
         StackTraceElement[] stackTraceElements = exception.getStackTrace();
 
         List<String> methodCodes = new ArrayList<>();
+        String testClassName = null;
 
         boolean found = false;
         for (StackTraceElement element : stackTraceElements) {
@@ -67,6 +69,7 @@ public class MethodCodeExtractor {
                     }
 
                     if (hasMethodWithAnnotation(clazz, AnalysisAI.class)) {
+                        testClassName = clazz.getName();
                         found = true;
                     }
                     continue;
@@ -83,6 +86,7 @@ public class MethodCodeExtractor {
 
                         if (method.isAnnotationPresent(AnalysisAI.class)) {
                             found = true;
+                            testClassName = clazz.getName();
                             break;
                         }
                     }
@@ -93,7 +97,7 @@ public class MethodCodeExtractor {
         }
 
         Collections.reverse(methodCodes);
-        return methodCodes;
+        return new Pair<>(testClassName, methodCodes);
     }
 
 

@@ -1,5 +1,6 @@
 package org.ai.automation.test_automation.service;
 
+import com.github.javaparser.utils.Pair;
 import com.theokanning.openai.completion.chat.ChatCompletionChoice;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatMessage;
@@ -58,11 +59,11 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
     protected String handleTestAnalysis(AnalysisAI analysisAI, Throwable throwable, String logContent) {
         StringBuilder aiResponse = new StringBuilder();
         if (Objects.nonNull(analysisAI)) {
-            List<String> methodCodes = MethodCodeExtractor.extractMethodCodes((Exception) throwable);
-            String stackTrace = getStackTrace(throwable);
+            Pair<String, List<String>> classNameMethodCodes = MethodCodeExtractor.extractMethodCodes((Exception) throwable);
+            String stackTrace = getStackTrace(throwable, classNameMethodCodes.a);
             messageTemplate.setLogContent(logContent);
-            String message = messageTemplate.formatMessageAnalysis(throwable.getMessage(), stackTrace, methodCodes);
-
+            String message = messageTemplate.formatMessageAnalysis(throwable.getMessage(), stackTrace, classNameMethodCodes.b);
+            System.out.println("Input message: " + message);
 
             final List<ChatMessage> messages = new ArrayList<>();
             final ChatMessage systemMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(),
@@ -76,7 +77,7 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
                 .model(aiConfig.model())
                 .messages(messages)
                 .n(1)
-                .maxTokens(350)
+                .maxTokens(600)
                 .logitBias(new HashMap<>())
                 .build();
 
@@ -84,6 +85,7 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
             List<ChatCompletionChoice> choices = service.createChatCompletion(chatCompletionRequest).getChoices();
             choices.forEach(choice -> aiResponse.append(choice.getMessage().getContent()));
         }
+        System.out.println("Output message: " + aiResponse.toString());
         return aiResponse.toString();
     }
 
@@ -91,10 +93,10 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
     protected String handleTestFix(FixAI fixAI, Throwable throwable, String logContent) {
         StringBuilder aiResponse = new StringBuilder();
         if (Objects.nonNull(fixAI)) {
-            List<String> methodCodes = MethodCodeExtractor.extractMethodCodes((Exception) throwable);
-            String stackTrace = getStackTrace(throwable);
+            Pair<String, List<String>> classNameMethods = MethodCodeExtractor.extractMethodCodes((Exception) throwable);
+            String stackTrace = getStackTrace(throwable, classNameMethods.a);
             messageTemplate.setLogContent(logContent);
-            String message = messageTemplate.formatMessageFixTest(throwable.getMessage(), stackTrace, methodCodes);
+            String message = messageTemplate.formatMessageFixTest(throwable.getMessage(), stackTrace, classNameMethods.b);
 
 
             final List<ChatMessage> messages = new ArrayList<>();
@@ -163,11 +165,17 @@ public abstract class TestResultHandlerImpl implements TestResultHandler {
     }
 
 
-    protected String getStackTrace(Throwable throwable) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        throwable.printStackTrace(pw);
-        return sw.toString();
+    protected String getStackTrace(Throwable throwable, String className) {
+        StringBuilder sb = new StringBuilder();
+
+        for (StackTraceElement element : throwable.getStackTrace()) {
+            sb.append(element.toString()).append("\n");
+            if (element.getClassName().equals(className)) {
+                break;
+            }
+        }
+
+        return sb.toString();
     }
 
 }
