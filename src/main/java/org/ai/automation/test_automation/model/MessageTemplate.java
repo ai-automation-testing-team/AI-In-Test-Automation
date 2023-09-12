@@ -54,7 +54,7 @@ public class MessageTemplate {
         stringBuilder
             .append("\n")
             .append("\n")
-            .append("Please try to do a good analysis and try to provide me some proposal solution for my problem.I would prefer code fixes")
+            .append("Please try to do a good analysis and try to provide me some proposal solution for my problem.I would prefer java code fixes")
             .append(this.customRequirement);
         return stringBuilder.toString();
     }
