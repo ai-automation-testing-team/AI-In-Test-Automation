@@ -25,7 +25,7 @@ public class TestNGTestResultHandler extends TestResultHandlerImpl {
         AnalysisAI analysisAI = iTestResult.getMethod().getConstructorOrMethod().getMethod()
             .getAnnotation(AnalysisAI.class);
         boolean passed = iTestResult.getStatus() == ITestResult.SUCCESS;
-        if (!passed) {
+        if (Objects.nonNull(analysisAI) && !passed) {
             Throwable throwable = iTestResult.getThrowable();
             return handleTestAnalysis(analysisAI, throwable, logContent);
         }

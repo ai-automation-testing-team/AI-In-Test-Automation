@@ -27,6 +27,24 @@ public class MessageTemplate {
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder
+            .append("My test is failing. I would provide you with reason why test is failing, stack trace, " +
+                "the code I am using and the log. Can you please take into consideration all of these things with " +
+                "emphasize on the log and try to do a good analysis and try to provide me one optimal solution for my problem. " +
+                "I would prefer java code fixes. Since these are UI automation tests, if HTML is provided, take into " +
+                "consideration changing the locators. Do not use Javascript to modify the existing HTML. " +
+                "Please, do not use redundant variables and initializers in the solution. Also, do not change the order of " +
+                "the methods I am using.")
+            .append("\n");
+
+        if (Objects.nonNull(logContent) && !logContent.isEmpty()) {
+            stringBuilder
+                .append("Here is the log from the execution. The error lines from the log are crucial for creating a fix")
+                .append("\n")
+                .append(logContent)
+                .append("\n");
+        }
+
+        stringBuilder
             .append("Tech used:" + this.techUsed)
             .append("\n")
             .append("Limit the response in: ").append(this.responseLimit).append(" words")
@@ -43,19 +61,38 @@ public class MessageTemplate {
 
         methodCodes.forEach(s -> stringBuilder.append("\n").append(s));
 
-        if (Objects.nonNull(logContent) && !logContent.isEmpty()) {
-            stringBuilder
-                .append("\n")
-                .append("Here is the log from the execution. The error lines from the log are crucial for creating a fix")
-                .append("\n")
-                .append(logContent);
-        }
 
-        stringBuilder
-            .append("\n")
-            .append("\n")
-            .append("Please try to do a good analysis and try to provide me some proposal solution for my problem.I would prefer java code fixes")
-            .append(this.customRequirement);
+
+//        stringBuilder
+//            .append("Tech used:" + this.techUsed)
+//            .append("\n")
+//            .append("Limit the response in: ").append(this.responseLimit).append(" words")
+//            .append("\n")
+//            .append("I am running test and my test is failing and this is the reason: ")
+//            .append("\n")
+//            .append(errorMessage)
+//            .append("\n")
+//            .append("Here is the stack trace:")
+//            .append("\n")
+//            .append(stackTrace)
+//            .append("\n")
+//            .append("Here is the used code:");
+
+//        methodCodes.forEach(s -> stringBuilder.append("\n").append(s));
+
+//        if (Objects.nonNull(logContent) && !logContent.isEmpty()) {
+//            stringBuilder
+//                .append("\n")
+//                .append("Here is the log from the execution. The error lines from the log are crucial for creating a fix")
+//                .append("\n")
+//                .append(logContent);
+//        }
+
+//        stringBuilder
+//            .append("\n")
+//            .append("\n")
+//            .append("Please try to do a good analysis and try to provide me some proposal solution for my problem.I would prefer java code fixes")
+//            .append(this.customRequirement);
         return stringBuilder.toString();
     }
 
